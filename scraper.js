@@ -2,35 +2,34 @@ var casper = require('casper').create();
 console.log("Loading script...");
 var links = [];
 
+// find hrefs and add them to array
 function getLinks() {
-// scrape the href links from each product
-var links = document.querySelectorAll('ul.results-list li.c div.summary span a');
-return Array.prototype.map.call(links, function (e) {
-	return e.getAttribute('href');
-});
+	var links = document.querySelectorAll('ul.results-list li.c div.summary span a');
+	return Array.prototype.map.call(links, function (e) {
+		return e.getAttribute('href');
+	});
 }
 
-// opens tuiholidays deals page homepage
-casper.start('https://www.tuiholidays.ie/f/deals/summer-holidays', function () {
-	casper.then(function () {
-		console.log("gathering links...");
-		links = this.evaluate(getLinks);
-		casper.wait(500, function() {
-			console.log("gathering scraped data...");
-		});
-		this.each(links,function(self,url){
-			self.thenOpen("https://www.tuiholidays.ie"+url,function(a){
-				casper.wait(500, function() {
-				// console.log(this.getCurrentUrl());
+// opens tuiholidays deals page 
+casper.start('https://www.tuiholidays.ie/f/deals/summer-holidays');
+
+// collect links from href and pass them into array
+// open each link stored in the array and collect data found by css selectors
+var getLinkData = casper.then(function () {
+	links = this.evaluate(getLinks);
+	console.log("gathering links - " + links.length + " links");
+	casper.wait(500, function() {
+		console.log("gathering scraped data...\n");
+	});
+	var getPageDetails = this.each(links,function(self,url){
+		self.thenOpen("https://www.tuiholidays.ie"+url,function(a){
+			casper.wait(500, function() {
 				var details = this.evaluate(function(){
 					var package_name = document.querySelector('.heading-section .pg-heading .dis-inblock h1').textContent;
-					
 					var location = document.querySelector('.heading-section .product-info .location span.pad-left-5').textContent;
 					// var location_splice = location.replace(/^\&nbsp\;|<br?\>*/gi, " ").replace(/\&nbsp\;|<br?\>$/gi, " ").trim();
-					
 					// var country = document.querySelector('.heading-section .product-info .location span.pad-left-5').innerHTML;
 					// var country_splice = " " + location_splice.split(" ").pop(); 
-
 					var price1 = document.querySelector('.part1').textContent;
 					var price2 = document.querySelector('.part2').textContent;
 					var price_pp = price1 + "." + price2;
@@ -50,17 +49,11 @@ casper.start('https://www.tuiholidays.ie/f/deals/summer-holidays', function () {
 				});
 				console.log(details);
 			});
-			});
 		});
 	});
+	// 	this.click('.pagination .pages .next a.controls');
 });
 
 casper.run(function () {
-	// for(var i in links) {
-	// 	console.log(links[i]);
-	// }
-	// for(var i in data){
-	// 	console.log(data[i]);
-	// }
 	casper.exit();
 });
