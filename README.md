@@ -5,7 +5,7 @@ This web scraper was built to coincide with another project. It's designed to sc
 
 
 When the information from each of the scraped links is collected, it is then exported to
-to file in JSON format and stored in the same folder was where the scraper.js is located.
+to file in JSON format and stored in the same folder as where the scraper.js is located.
 
 ## What information does it collect?
 The scraper collects the following information: 
