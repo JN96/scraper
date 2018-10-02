@@ -15,14 +15,14 @@ var evaluatedPackages = [];
 
 // find hrefs and add them to array
 function getLinks() {
-	var links = document.querySelectorAll('ul.results-list li.c div.summary span a');
+	var links = document.querySelectorAll('ul.new-results-list li div.package-card div.summary-breakdown div.c div.continue-button a');
 	return Array.prototype.map.call(links, function (e) {
 		return e.getAttribute('href');
 	});
 }
 
 casper.then(function() {
-    for (var i=1; i <=3; i++) { // i <=int; is the number of pages to loop through
+    for (var i=1; i <=1; i++) { // i <=int; is the number of pages to loop through
     	(function(i){
     		casper.wait(1500, function() {
     			if (!this.exists('.pagination .pages .next a.controls')) {
@@ -100,5 +100,3 @@ casper.then(function(){
 	})
 	console.log("export complete!");
 });
-
-
